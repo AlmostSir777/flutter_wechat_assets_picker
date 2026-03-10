@@ -2,8 +2,6 @@
 // Use of this source code is governed by an Apache license that can be found
 // in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -34,19 +32,16 @@ class _MultiAssetsPageState extends State<MultiAssetsPage>
       PickMethod.image(context, maxAssetsCount),
       PickMethod.video(context, maxAssetsCount),
       PickMethod.audio(context, maxAssetsCount),
-      if (Platform.isIOS || Platform.isMacOS)
-        PickMethod.livePhoto(context, maxAssetsCount),
       PickMethod.camera(
         context: context,
         maxAssetsCount: maxAssetsCount,
         handleResult: (BuildContext context, AssetEntity result) =>
-            Navigator.maybeOf(context)?.pop(<AssetEntity>[...assets, result]),
+            Navigator.of(context).pop(<AssetEntity>[...assets, result]),
       ),
       PickMethod.cameraAndStay(context, maxAssetsCount),
       PickMethod.changeLanguages(context, maxAssetsCount),
       PickMethod.threeItemsGrid(context, maxAssetsCount),
       PickMethod.prependItem(context, maxAssetsCount),
-      PickMethod.multiSpecialItems(context, maxAssetsCount),
       PickMethod(
         icon: '🎭',
         name: context.l10n.pickMethodWeChatMomentName,
@@ -66,7 +61,6 @@ class _MultiAssetsPageState extends State<MultiAssetsPage>
       PickMethod.pathNameBuilder(context, maxAssetsCount),
       PickMethod.customFilterOptions(context, maxAssetsCount),
       PickMethod.preventGIFPicked(context, maxAssetsCount),
-      PickMethod.disableLivePhoto(context, maxAssetsCount),
       PickMethod.keepScrollOffset(
         context: context,
         delegate: () => keepScrollDelegate!,

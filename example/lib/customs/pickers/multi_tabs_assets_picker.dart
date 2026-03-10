@@ -2,6 +2,7 @@
 // Use of this source code is governed by an Apache license that can be found
 // in the LICENSE file.
 
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -29,14 +30,7 @@ class _MultiTabAssetPickerState extends State<MultiTabAssetPicker> {
   bool isDisplayingDetail = true;
 
   Future<void> callPicker(BuildContext context) async {
-    final PermissionState ps = await AssetPicker.permissionCheck(
-      requestOption: const PermissionRequestOption(
-        androidPermission: AndroidPermission(
-          type: RequestType.all,
-          mediaLocation: false,
-        ),
-      ),
-    );
+    final PermissionState ps = await AssetPicker.permissionCheck();
 
     final DefaultAssetPickerProvider provider = DefaultAssetPickerProvider(
       selectedAssets: entities,
@@ -260,8 +254,7 @@ class _MultiTabAssetPickerState extends State<MultiTabAssetPicker> {
   }
 }
 
-final class MultiTabAssetPickerBuilder
-    extends DefaultAssetPickerBuilderDelegate {
+class MultiTabAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
   MultiTabAssetPickerBuilder({
     required super.provider,
     required this.videosProvider,
@@ -280,10 +273,7 @@ final class MultiTabAssetPickerBuilder
   late final TabController _tabController;
 
   @override
-  void initState(
-    AssetPickerState<AssetEntity, AssetPathEntity, MultiTabAssetPickerBuilder>
-        state,
-  ) {
+  void initState(AssetPickerState<AssetEntity, AssetPathEntity> state) {
     super.initState(state);
     _tabController = TabController(length: 3, vsync: state);
   }
@@ -397,7 +387,7 @@ final class MultiTabAssetPickerBuilder
             borderRadius: BorderRadius.circular(3),
           ),
           onPressed: p.isSelectedNotEmpty
-              ? () => Navigator.maybeOf(context)?.maybePop(p.selectedAssets)
+              ? () => Navigator.of(context).maybePop(p.selectedAssets)
               : null,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           child: Text(
@@ -523,14 +513,9 @@ final class MultiTabAssetPickerBuilder
 
   Widget _buildGrid(BuildContext context) {
     return Consumer<DefaultAssetPickerProvider>(
-      builder: (context, p, __) {
-        final hasAssetsToDisplay = p.hasAssetsToDisplay;
-        final shouldBuildSpecialItems = assetsGridSpecialItemsFinalized(
-          context: context,
-          path: p.currentPath?.path,
-        ).isNotEmpty;
-        final shouldDisplayAssets =
-            hasAssetsToDisplay || shouldBuildSpecialItems;
+      builder: (BuildContext context, DefaultAssetPickerProvider p, __) {
+        final bool shouldDisplayAssets =
+            p.hasAssetsToDisplay || shouldBuildSpecialItem;
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           child: shouldDisplayAssets
@@ -540,7 +525,7 @@ final class MultiTabAssetPickerBuilder
                       child: Column(
                         children: <Widget>[
                           Expanded(child: assetsGridBuilder(context)),
-                          bottomActionBar(context),
+                          if (isPreviewEnabled) bottomActionBar(context),
                         ],
                       ),
                     ),
@@ -570,7 +555,7 @@ final class MultiTabAssetPickerBuilder
                   appleOSLayout(context)
                 else
                   androidLayout(context),
-                permissionOverlay(context),
+                if (Platform.isIOS) iOSPermissionOverlay(context),
               ],
             ),
           ),

@@ -1,6 +1,7 @@
-// Copyright 2019 The FlutterCandies author. All rights reserved.
-// Use of this source code is governed by an Apache license that can be found
-// in the LICENSE file.
+//
+// [Author] Alex (https://github.com/AlexV525)
+// [Date] 2022/09/20 17:09
+//
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,6 +23,7 @@ void main() {
                 context,
                 pickerConfig: const AssetPickerConfig(
                   maxAssets: 10,
+                  // ignore: avoid_redundant_argument_values
                   specialPickerType: null, // Explicitly null.
                 ),
               );
@@ -43,6 +45,7 @@ void main() {
                 context,
                 pickerConfig: const AssetPickerConfig(
                   maxAssets: 1,
+                  // ignore: avoid_redundant_argument_values
                   specialPickerType: null, // Explicitly null.
                 ),
               );
